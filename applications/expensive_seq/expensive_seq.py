@@ -1,9 +1,13 @@
 # Your code here
-
+cache = {}
 
 def expensive_seq(x, y, z):
     # Your code here
+    key = (x, y, z)
+    if key not in cache:   
+        cache[key] = None # What expensive thing should go here?
 
+    return cache[key]
 
 
 if __name__ == "__main__":

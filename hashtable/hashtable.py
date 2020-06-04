@@ -7,10 +7,8 @@ class HashTableEntry:
         self.value = value
         self.next = None
 
-
 # Hash table can't have fewer than this many slots
 MIN_CAPACITY = 8
-
 
 class HashTable:
     """
@@ -22,6 +20,9 @@ class HashTable:
 
     def __init__(self, capacity):
         # Your code here
+        self.capacity = capacity
+        self.item_count = 0
+        self.storage = [None] * capacity
 
 
     def get_num_slots(self):
@@ -35,6 +36,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        return len(self.capacity)
 
 
     def get_load_factor(self):
@@ -44,6 +46,20 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        # items in storage / capacity
+        # # number of things stored in the hash table / number of slots in the array
+
+        # When computing the load, keep track of the number of items in the hash table as
+        # you go.
+
+        # * When you put a new item in the hash table, increment the count
+        # * When you delete an item from the hash table, decrement the count
+
+        # When is the hash table overloaded?
+
+        # * It's overloaded when load factor > 0.7
+        # * It's underloaded when load factor < 0.2 (Stretch)
+        return self.item_count / self.capacity
 
 
     def fnv1(self, key):
@@ -63,6 +79,10 @@ class HashTable:
         Implement this, and/or FNV-1.
         """
         # Your code here
+        hash = 5381
+        for x in key:
+            hash = (( hash << 5) + hash) + ord(x)
+            return hash & 0xFFFFFFFF
 
 
     def hash_index(self, key):
@@ -82,7 +102,32 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        # Follow the pointer strategy!
+        # new.next = current.head
+        # current.head = new.value
+        # once more than one value goes into one key, it becomes a LL
 
+        # Find the slot for the key
+        current_index = self.hash_index(key)
+        # Search the linked list for the key
+        key_in_LL = self.storage[current_index]
+        # If found, update it
+        while key_in_LL is not None and key_in_LL != key:
+            key_in_LL = key_in_LL.next
+
+        if key_in_LL is not None:
+            key_in_LL.value = value
+            
+        # If not found, make a new HashTableEntry and add it to the list
+        else:
+            new_entry = HashTableEntry(key, value)
+            new_entry.next = self.storage[current_index]
+            self.storage[current_index] = new_entry
+            self.item_count = +1
+            
+            if self.get_load_factor() > 0.7:
+                self.resize(self.storage * 2)
+        
 
     def delete(self, key):
         """
@@ -93,6 +138,12 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        # Follow the pointer strategy!
+
+        # Find the slot for the key
+        # Search the linked list for the key
+        # If found, delete it from the linked list, then return the deleted value
+        # If not found, return None
 
 
     def get(self, key):
@@ -104,7 +155,10 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
+        # Find the slot for the key
+        # Search the linked list for the key
+        # If found, return the value
+        # If not found, return None
 
     def resize(self, new_capacity):
         """
@@ -114,6 +168,23 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        self.capacity = new_capacity
+
+        # In a nutshell, take everything out of the old hash table array, and put it in a
+        # new, resized array.
+
+        # 1. Allocate a new array of bigger size, typically double the previous size
+        # (or half the size if resizing down, down to some minimum)
+
+        # 2. Traverse the old hash table -- O(n) over the number of elements in the hash
+        # table
+
+        # For each of the elements:
+        #     Figure it's slot in the bigger (or smaller), new array
+        #     Put it there
+        # for x in
+        # Automatically do this when the hash table is overloaded, or underloaded
+        # (stretch).
 
 
 

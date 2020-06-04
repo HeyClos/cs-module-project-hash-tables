@@ -1,6 +1,7 @@
 def word_count(s):
     # Your code here
 
+# might have to use splice"""
 
 
 if __name__ == "__main__":
